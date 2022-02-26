@@ -7,6 +7,8 @@
 #import <React/RCTUtils.h>
 #import <React/UIView+React.h>
 #import <React/RCTImageLoader.h>
+#import <SDWebImage/SDAnimatedImageView+WebCache.h>
+#import <SDWebImage/SDWebImageDownloader.h>
 
 @interface RNPhotoView()
 
@@ -297,7 +299,7 @@
         _source = source;
         NSURL *imageURL = [NSURL URLWithString:uri];
 
-        if (![[uri substringToIndex:4] isEqualToString:@"http"]) {
+        if (imageURL && ![[uri substringToIndex:4] isEqualToString:@"http"]) {
             @try {
                 UIImage *image = RCTImageFromLocalAssetURL(imageURL);
                 if (image) { // if local image
@@ -316,17 +318,11 @@
             }
         }
 
-        NSURLRequest *request = [[NSURLRequest alloc] initWithURL:imageURL];
-
         if (source[@"headers"]) {
-            NSMutableURLRequest *mutableRequest = [request mutableCopy];
-
-            NSDictionary *headers = source[@"headers"];
-            NSEnumerator *enumerator = [headers keyEnumerator];
-            id key;
-            while((key = [enumerator nextObject]))
-                [mutableRequest addValue:[headers objectForKey:key] forHTTPHeaderField:key];
-            request = [mutableRequest copy];
+            // Set SDWebImage headers.
+            [source[@"headers"] enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString* header, BOOL *stop) {
+                [[SDWebImageDownloader sharedDownloader] setValue:header forHTTPHeaderField:key];
+            }];
         }
 
         __weak RNPhotoView *weakSelf = self;
@@ -334,39 +330,37 @@
             _onPhotoViewerLoadStart(nil);
         }
 
-        // use default values from [imageLoader loadImageWithURLRequest:request callback:callback] method
-        [[_bridge moduleForClass:[RCTImageLoader class]] loadImageWithURLRequest:request
-                                        size:CGSizeZero
-                                       scale:1
-                                     clipped:YES
-                                  resizeMode:RCTResizeModeStretch
-                               progressBlock:^(int64_t progress, int64_t total) {
-                                   if (_onPhotoViewerProgress) {
-                                       _onPhotoViewerProgress(@{
-                                           @"loaded": @((double)progress),
-                                           @"total": @((double)total),
-                                       });
-                                   }
-                               }
-                            partialLoadBlock:nil
-                             completionBlock:^(NSError *error, UIImage *image) {
-                                                if (image) {
-                                                    dispatch_async(dispatch_get_main_queue(), ^{
-                                                        [weakSelf setImage:image];
-                                                    });
-                                                    if (_onPhotoViewerLoad) {
-                                                        _onPhotoViewerLoad(nil);
-                                                    }
-                                                } else {
-                                                    if (_onPhotoViewerError) {
-                                                        _onPhotoViewerError(nil);
-                                                    }
-                                                }
-                                                if (_onPhotoViewerLoadEnd) {
-                                                    _onPhotoViewerLoadEnd(nil);
-                                                }
-                                            }];
+        SDWebImageOptions options = SDWebImageRetryFailed;
+        [weakSelf downloadImage:imageURL options:options];
     });
+}
+
+- (void)downloadImage:(NSURL *) url options:(SDWebImageOptions) options {
+    __weak typeof(self) weakSelf = self; // Always use a weak reference to self in blocks
+    [[SDWebImageManager sharedManager] loadImageWithURL:url options:options progress:^(NSInteger receivedSize, NSInteger expectedSize, NSURL * _Nullable targetURL) {
+        if (weakSelf.onPhotoViewerProgress) {
+            weakSelf.onPhotoViewerProgress(@{
+                @"loaded": @(receivedSize),
+                @"total": @(expectedSize)
+                                           });
+        }
+    } completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, SDImageCacheType cacheType, BOOL finished, NSURL * _Nullable imageURL) {
+        if (error) {
+            if (weakSelf.onPhotoViewerError) {
+                weakSelf.onPhotoViewerError(nil);
+            }
+        } else if (image) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [weakSelf setImage:image];
+            });
+            if (weakSelf.onPhotoViewerLoad) {
+                weakSelf.onPhotoViewerLoad(nil);
+            }
+        }
+        if (weakSelf.onPhotoViewerLoadEnd) {
+            weakSelf.onPhotoViewerLoadEnd(nil);
+        }
+    }];
 }
 
 - (void)setLoadingIndicatorSrc:(NSString *)loadingIndicatorSrc {
