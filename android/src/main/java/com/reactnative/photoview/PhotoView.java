@@ -24,6 +24,7 @@ import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.common.SystemClock;
 import com.facebook.react.modules.fresco.ReactNetworkImageRequest;
 import com.facebook.react.uimanager.UIManagerModule;
+import com.facebook.react.uimanager.UIManagerHelper;
 import com.facebook.react.uimanager.events.EventDispatcher;
 import me.relex.photodraweeview.OnPhotoTapListener;
 import me.relex.photodraweeview.OnScaleChangeListener;
@@ -186,9 +187,8 @@ public class PhotoView extends PhotoDraweeView {
     }
 
     private void setViewCallbacks() {
-        final EventDispatcher eventDispatcher = ((ReactContext) getContext())
-                .getNativeModule(UIManagerModule.class).getEventDispatcher();
-
+        final EventDispatcher eventDispatcher = UIManagerHelper.getEventDispatcherForReactTag((ReactContext)getContext(), this.getId());
+        
         setOnPhotoTapListener(new OnPhotoTapListener() {
             @Override
             public void onPhotoTap(View view, float x, float y) {
