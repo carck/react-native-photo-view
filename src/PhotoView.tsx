@@ -1,9 +1,14 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { requireNativeComponent, View } from 'react-native';
+import { requireNativeComponent } from 'react-native';
 import ViewPropTypes from 'react-native/Libraries/Components/View/ViewPropTypes';
 
 const resolveAssetSource = require('react-native/Libraries/Image/resolveAssetSource');
+
+const isFabricEnabled = (global as any)?.nativeFabricUIManager != null
+const RNPhotoView = isFabricEnabled
+    ? require('./PhotoViewNativeComponent').default
+    : requireNativeComponent('RNPhotoView');
 
 export default class PhotoView extends Component {
     static propTypes = {
@@ -25,13 +30,16 @@ export default class PhotoView extends Component {
         minimumZoomScale: PropTypes.number,
         maximumZoomScale: PropTypes.number,
         scale: PropTypes.number,
+        androidZoomTransitionDuration: PropTypes.number,
+        androidScaleType: PropTypes.oneOf(["center", "centerCrop", "centerInside", "fitCenter", "fitStart", "fitEnd", "fitXY", "matrix"]),
         onLoadStart: PropTypes.func,
+        onError: PropTypes.func,
         onLoad: PropTypes.func,
         onLoadEnd: PropTypes.func,
-        onProgress: PropTypes.func,
         onTap: PropTypes.func,
         onViewTap: PropTypes.func,
         onScale: PropTypes.func,
+        onProgress: PropTypes.func,
         showsHorizontalScrollIndicator: PropTypes.bool,
         showsVerticalScrollIndicator: PropTypes.bool,
         ...ViewPropTypes
@@ -45,23 +53,12 @@ export default class PhotoView extends Component {
             console.warn('source.uri should not be an empty string');
         }
 
-        if (this.props.src) {
-            console.warn('The <PhotoView> component requires a `source` property rather than `src`.');
-        }
-
         if (source && source.uri) {
-            var {onLoadStart, onLoad, onLoadEnd, onProgress, onTap, onViewTap, onScale, onError, ...props} = this.props;
+            var { onLoadStart, onLoad, onLoadEnd, onError } = this.props;
 
             var nativeProps = {
-                onPhotoViewerError: onError,
-                onPhotoViewerLoadStart: onLoadStart,
-                onPhotoViewerLoad: onLoad,
-                onPhotoViewerLoadEnd: onLoadEnd,
-                onPhotoViewerProgress: onProgress,
-                onPhotoViewerTap: onTap,
-                onPhotoViewerViewTap: onViewTap,
-                onPhotoViewerScale: onScale,
-                ...props,
+                ...this.props,
+                shouldNotifyLoadEvents: !!(onLoadStart || onLoad || onLoadEnd || onError),
                 src: source,
                 loadingIndicatorSrc: loadingIndicatorSource ? loadingIndicatorSource.uri : null,
             };
@@ -72,19 +69,3 @@ export default class PhotoView extends Component {
     }
 }
 
-var cfg = {
-    nativeOnly: {
-        onPhotoViewerError: true,
-        onPhotoViewerLoadStart: true,
-        onPhotoViewerLoad: true,
-        onPhotoViewerLoadEnd: true,
-        onPhotoViewerProgress: true,
-        onPhotoViewerTap: true,
-        onPhotoViewerViewTap: true,
-        onPhotoViewerScale: true,
-        src: true,
-        loadingIndicatorSrc: true
-    }
-};
-
-const RNPhotoView = requireNativeComponent('RNPhotoView', PhotoView, cfg);

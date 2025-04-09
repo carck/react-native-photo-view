@@ -1,12 +1,13 @@
 #import "RNPhotoViewManager.h"
 #import "RNPhotoView.h"
+#import <React/RCTBridgeModule.h>
 
 @implementation RNPhotoViewManager
 
 RCT_EXPORT_MODULE()
 
-- (UIView *)view {
-    return [[RNPhotoView alloc] initWithBridge:self.bridge];
+- (RNPhotoView *)view {
+    return [[RNPhotoView alloc] init]; // Unified initialization for both architectures
 }
 
 RCT_REMAP_VIEW_PROPERTY(src, source, NSDictionary)
@@ -26,5 +27,9 @@ RCT_EXPORT_VIEW_PROPERTY(onPhotoViewerLoadStart, RCTDirectEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onPhotoViewerLoad, RCTDirectEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onPhotoViewerLoadEnd, RCTDirectEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onPhotoViewerProgress, RCTDirectEventBlock);
+
+RCT_EXPORT_VIEW_PROPERTY(androidScaleType, NSString)
+RCT_EXPORT_VIEW_PROPERTY(fadeDuration, NSInteger)
+RCT_EXPORT_VIEW_PROPERTY(shouldNotifyLoadEvents, BOOL)
 
 @end

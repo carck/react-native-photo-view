@@ -1,6 +1,5 @@
 #import "RNPhotoView.h"
 
-#import <React/RCTBridge.h>
 #import <React/RCTConvert.h>
 #import <React/RCTEventDispatcher.h>
 #import <React/RCTImageSource.h>
@@ -26,15 +25,18 @@
 @end
 
 @implementation RNPhotoView
-{
-    __weak RCTBridge *_bridge;
+
+- (instancetype)init {
+    if ((self = [super init])) {
+        [self initView];
+    }
+    return self;
 }
 
-- (instancetype)initWithBridge:(RCTBridge *)bridge
+- (instancetype)initWithFrame:(CGRect)frame
 {
-    if ((self = [super init])) {
-        _bridge = bridge;
-        [self initView];
+    if (self = [super initWithFrame:frame]) {
+       [self initView];
     }
     return self;
 }
@@ -301,7 +303,7 @@
 
         if (imageURL && ![[uri substringToIndex:4] isEqualToString:@"http"]) {
             @try {
-                UIImage *image = RCTImageFromLocalAssetURL(imageURL);
+                UIImage *image = [UIImage imageWithContentsOfFile:imageURL.path];
                 if (image) { // if local image
                     [self setImage:image];
                     if (_onPhotoViewerLoad) {
@@ -372,7 +374,7 @@
     }
     _loadingIndicatorSrc = loadingIndicatorSrc;
     NSURL *imageURL = [NSURL URLWithString:_loadingIndicatorSrc];
-    UIImage *image = RCTImageFromLocalAssetURL(imageURL);
+    UIImage *image = [UIImage imageWithContentsOfFile:imageURL.path];
     if (image) {
         [self setLoadingImage:image];
     }
@@ -399,6 +401,18 @@
 - (void)setScale:(NSInteger)scale {
     _scale = scale;
     [self setZoomScale:_scale];
+}
+
+- (void)setAndroidScaleType:(NSString *)scaleType {
+    _androidScaleType = scaleType;
+}
+
+- (void)setFadeDuration:(NSInteger)fadeDuration {
+    _fadeDuration = fadeDuration;
+}
+
+- (void)setShouldNotifyLoadEvents:(BOOL)shouldNotify {
+    _shouldNotifyLoadEvents = shouldNotify;
 }
 
 #pragma mark - Private

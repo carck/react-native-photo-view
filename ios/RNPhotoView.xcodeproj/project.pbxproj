@@ -11,6 +11,7 @@
 		28829E221F1F5DB900A2FFDB /* RNPhotoViewManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 28829E211F1F5DB900A2FFDB /* RNPhotoViewManager.m */; };
 		28829E271F1F670500A2FFDB /* MWTapDetectingImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 28829E241F1F670500A2FFDB /* MWTapDetectingImageView.m */; };
 		28829E281F1F670500A2FFDB /* MWTapDetectingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 28829E261F1F670500A2FFDB /* MWTapDetectingView.m */; };
+		9A8B7C001A2F4B3A00D1A2FF /* RNPhotoViewComponentView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9A8B7C011A2F4B3A00D1A2FF /* RNPhotoViewComponentView.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -35,6 +36,8 @@
 		28829E241F1F670500A2FFDB /* MWTapDetectingImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MWTapDetectingImageView.m; sourceTree = "<group>"; };
 		28829E251F1F670500A2FFDB /* MWTapDetectingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MWTapDetectingView.h; sourceTree = "<group>"; };
 		28829E261F1F670500A2FFDB /* MWTapDetectingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MWTapDetectingView.m; sourceTree = "<group>"; };
+		9A8B7C001A2F4B3A00D1A2FE /* RNPhotoViewComponentView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNPhotoViewComponentView.h; sourceTree = "<group>"; };
+		9A8B7C011A2F4B3A00D1A2FF /* RNPhotoViewComponentView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RNPhotoViewComponentView.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -67,6 +70,8 @@
 				28829E211F1F5DB900A2FFDB /* RNPhotoViewManager.m */,
 				13BE3DEC1AC21097009241FE /* RNPhotoView.h */,
 				13BE3DED1AC21097009241FE /* RNPhotoView.m */,
+				9A8B7C001A2F4B3A00D1A2FE /* RNPhotoViewComponentView.h */,
+				9A8B7C011A2F4B3A00D1A2FF /* RNPhotoViewComponentView.mm */,
 				134814211AA4EA7D00B7C361 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -131,6 +136,7 @@
 				13BE3DEE1AC21097009241FE /* RNPhotoView.m in Sources */,
 				28829E281F1F670500A2FFDB /* MWTapDetectingView.m in Sources */,
 				28829E221F1F5DB900A2FFDB /* RNPhotoViewManager.m in Sources */,
+				9A8B7C001A2F4B3A00D1A2FF /* RNPhotoViewComponentView.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -215,10 +221,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"$(SRCROOT)/../../React/**",
-					"$(SRCROOT)/../../node_modules/react-native/React/**",
+					"$(SRCROOT)/../../react-native/React/**",
+					"$(SRCROOT)/../../react-native/Libraries/Image",
+					"$(SRCROOT)/../../../ios/Pods/Headers/Public/**",
 				);
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = "-ObjC";
@@ -231,9 +236,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"$(SRCROOT)/../../React/**",
+					"$(SRCROOT)/../../react-native/React/**",
+					"$(SRCROOT)/../../react-native/Libraries/Image",
+					"$(SRCROOT)/../../../ios/Pods/Headers/Public/**",
 				);
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = "-ObjC";

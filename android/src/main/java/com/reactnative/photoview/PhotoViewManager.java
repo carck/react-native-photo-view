@@ -10,6 +10,9 @@ import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.common.MapBuilder;
 import com.facebook.react.uimanager.SimpleViewManager;
 import com.facebook.react.uimanager.ThemedReactContext;
+import com.facebook.react.uimanager.ViewManagerDelegate;
+import com.facebook.react.viewmanagers.RNPhotoViewManagerDelegate;
+import com.facebook.react.viewmanagers.RNPhotoViewManagerInterface;
 import com.facebook.react.uimanager.annotations.ReactProp;
 
 import javax.annotation.Nullable;
@@ -19,13 +22,20 @@ import java.util.Map;
  * @author alwx (https://github.com/alwx)
  * @version 1.0
  */
-public class PhotoViewManager extends SimpleViewManager<PhotoView> {
-    private static final String REACT_CLASS = "PhotoViewAndroid";
+public class PhotoViewManager extends SimpleViewManager<PhotoView> implements RNPhotoViewManagerInterface<PhotoView> {
+    private static final String REACT_CLASS = "RNPhotoView";
 
     private ResourceDrawableIdHelper mResourceDrawableIdHelper;
+    private final ViewManagerDelegate<PhotoView> mDelegate;
 
-    PhotoViewManager(ReactApplicationContext context) {
+    public PhotoViewManager(ReactApplicationContext context) {
         mResourceDrawableIdHelper = new ResourceDrawableIdHelper();
+        mDelegate = new RNPhotoViewManagerDelegate<>(this);
+    }
+
+    @Override
+    public ViewManagerDelegate<PhotoView> getDelegate() {
+        return mDelegate;
     }
 
     @Override
@@ -44,7 +54,7 @@ public class PhotoViewManager extends SimpleViewManager<PhotoView> {
     }
 
     @ReactProp(name = "loadingIndicatorSrc")
-    public void setLoadingIndicatorSource(PhotoView view, @Nullable String source) {
+    public void setLoadingIndicatorSrc(PhotoView view, @Nullable String source) {
         view.setLoadingIndicatorSource(source, mResourceDrawableIdHelper);
     }
 
@@ -54,7 +64,7 @@ public class PhotoViewManager extends SimpleViewManager<PhotoView> {
     }
 
     @ReactProp(name = "shouldNotifyLoadEvents")
-    public void setLoadHandlersRegistered(PhotoView view, boolean shouldNotifyLoadEvents) {
+    public void setShouldNotifyLoadEvents(PhotoView view, boolean shouldNotifyLoadEvents) {
         view.setShouldNotifyLoadEvents(shouldNotifyLoadEvents);
     }
 
@@ -74,12 +84,12 @@ public class PhotoViewManager extends SimpleViewManager<PhotoView> {
     }
 
     @ReactProp(name = "androidZoomTransitionDuration")
-    public void setScale(PhotoView view, int durationMs) {
+    public void setAndroidZoomTransitionDuration(PhotoView view, int durationMs) {
         view.setZoomTransitionDuration(durationMs);
     }
 
     @ReactProp(name = "androidScaleType")
-    public void setScaleType(PhotoView view, String scaleType) {
+    public void setAndroidScaleType(PhotoView view, String scaleType) {
         ScalingUtils.ScaleType value = ScalingUtils.ScaleType.CENTER;
 
         switch (scaleType) {
@@ -109,17 +119,26 @@ public class PhotoViewManager extends SimpleViewManager<PhotoView> {
         hierarchy.setActualImageScaleType(value);
     }
 
+    public void setShowsHorizontalScrollIndicator(PhotoView view, boolean value){
+
+    }
+
+    public void setShowsVerticalScrollIndicator(PhotoView view, boolean value){
+
+    }
+
     @Override
     public @Nullable
     Map getExportedCustomDirectEventTypeConstants() {
         return MapBuilder.of(
-                ImageEvent.eventNameForType(ImageEvent.ON_ERROR), MapBuilder.of("registrationName", "onPhotoViewerError"),
-                ImageEvent.eventNameForType(ImageEvent.ON_LOAD_START), MapBuilder.of("registrationName", "onPhotoViewerLoadStart"),
-                ImageEvent.eventNameForType(ImageEvent.ON_LOAD), MapBuilder.of("registrationName", "onPhotoViewerLoad"),
-                ImageEvent.eventNameForType(ImageEvent.ON_LOAD_END), MapBuilder.of("registrationName", "onPhotoViewerLoadEnd"),
-                ImageEvent.eventNameForType(ImageEvent.ON_TAP), MapBuilder.of("registrationName", "onPhotoViewerTap"),
-                ImageEvent.eventNameForType(ImageEvent.ON_VIEW_TAP), MapBuilder.of("registrationName", "onPhotoViewerViewTap"),
-                ImageEvent.eventNameForType(ImageEvent.ON_SCALE), MapBuilder.of("registrationName", "onPhotoViewerScale")
+                ImageEvent.eventNameForType(ImageEvent.ON_ERROR), MapBuilder.of("registrationName", ImageEvent.eventNameForType(ImageEvent.ON_ERROR)),
+                ImageEvent.eventNameForType(ImageEvent.ON_LOAD_START), MapBuilder.of("registrationName", ImageEvent.eventNameForType(ImageEvent.ON_LOAD_START)),
+                ImageEvent.eventNameForType(ImageEvent.ON_LOAD), MapBuilder.of("registrationName", ImageEvent.eventNameForType(ImageEvent.ON_LOAD)),
+                ImageEvent.eventNameForType(ImageEvent.ON_LOAD_END), MapBuilder.of("registrationName", ImageEvent.eventNameForType(ImageEvent.ON_LOAD_END)),
+                ImageEvent.eventNameForType(ImageEvent.ON_TAP), MapBuilder.of("registrationName", ImageEvent.eventNameForType(ImageEvent.ON_TAP)),
+                ImageEvent.eventNameForType(ImageEvent.ON_VIEW_TAP), MapBuilder.of("registrationName", ImageEvent.eventNameForType(ImageEvent.ON_VIEW_TAP)),
+                ImageEvent.eventNameForType(ImageEvent.ON_SCALE), MapBuilder.of("registrationName", ImageEvent.eventNameForType(ImageEvent.ON_SCALE))
+                //ImageEvent.eventNameForType(ImageEvent.ON_PROGRESS), MapBuilder.of("registrationName", ImageEvent.eventNameForType(ImageEvent.ON_PROGRESS))
         );
     }
 

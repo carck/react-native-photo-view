@@ -1,5 +1,5 @@
 #import <React/RCTViewManager.h>
 
-@interface RNPhotoViewManager : RCTViewManager <RCTBridgeModule>
+@interface RNPhotoViewManager : RCTViewManager
 
 @end
