@@ -93,12 +93,13 @@
     touchY += self.contentOffset.y;
 
     if (_onPhotoViewerTap) {
+        id reactTag = self.reactTag ?: [NSNull null];
         _onPhotoViewerTap(@{
                             @"point": @{
                                     @"x": @(touchX),
                                     @"y": @(touchY),
                                     },
-                            @"target": self.reactTag
+                            @"target": reactTag
                             });
     }
 }
@@ -120,12 +121,13 @@
     touchY += self.contentOffset.y;
 
     if (_onPhotoViewerViewTap) {
+        id reactTag = self.reactTag ?: [NSNull null];
         _onPhotoViewerViewTap(@{
                                 @"point": @{
                                         @"x": @(touchX),
                                         @"y": @(touchY),
                                         },
-                                @"target": self.reactTag,
+                                @"target": reactTag,
                                 });
     }
 }

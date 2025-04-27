@@ -15,9 +15,37 @@ using namespace facebook::react;
 - (instancetype)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
         // Initialize RNPhotoView as the content view
-        self.contentView = [[RNPhotoView alloc] initWithFrame:self.bounds];
+        RNPhotoView *photoView = [self createRNPhotoView];
+        self.contentView = photoView;
     }
     return self;
+}
+
+- (RNPhotoView *)createRNPhotoView {
+    RNPhotoView *photoView = [[RNPhotoView alloc] initWithFrame:self.bounds];
+
+    RNPhotoViewComponentView *__weak weakSelf = self;
+
+    photoView.onPhotoViewerTap = ^(NSDictionary *event) {
+        RNPhotoViewEventEmitter::OnTap onTapEvent;
+        onTapEvent.x = [event[@"point"][@"x"] intValue];
+        onTapEvent.y = [event[@"point"][@"y"] intValue];
+        weakSelf.eventEmitter.onTap(onTapEvent);
+    };
+
+    photoView.onPhotoViewerViewTap = ^(NSDictionary *event) {
+        RNPhotoViewEventEmitter::OnViewTap onViewTapEvent;
+        onViewTapEvent.x = [event[@"point"][@"x"] intValue];
+        onViewTapEvent.y = [event[@"point"][@"y"] intValue];
+        weakSelf.eventEmitter.onViewTap(onViewTapEvent);
+    };
+
+    return photoView;
+}
+
+- (const RNPhotoViewEventEmitter &)eventEmitter
+{
+  return static_cast<const RNPhotoViewEventEmitter &>(*_eventEmitter);
 }
 
 - (void)layoutSubviews {
@@ -102,7 +130,7 @@ static const Props::Shared &sharedDefaultProps()
 - (void)prepareForRecycle {
     [super prepareForRecycle];
     // Create a new RNPhotoView instance and assign it to contentView
-    self.contentView = [[RNPhotoView alloc] initWithFrame:self.bounds];
+    self.contentView =[self createRNPhotoView];
 }
 
 // Add the componentDescriptorProvider class function
