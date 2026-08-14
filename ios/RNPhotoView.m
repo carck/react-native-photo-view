@@ -42,6 +42,17 @@
 #pragma mark - UIScrollViewDelegate
 
 - (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView {
+    // If there's an image source, zoom the image
+    if (self.hasSource) {
+        return _photoImageView;
+    }
+    // Otherwise, zoom the first child view (e.g., video player)
+    // Skip photoImageView and tapView
+    for (UIView *view in self.subviews) {
+        if (view != _photoImageView && view != _tapView) {
+            return view;
+        }
+    }
     return _photoImageView;
 }
 
@@ -293,9 +304,26 @@
             return;
         }
         NSString *uri = source[@"uri"];
+        
+        // If no URI, hide image view and enable zoom for child views (like video)
         if (!uri) {
+            _photoImageView.hidden = YES;
+            _tapView.hidden = YES;
+            self.hasSource = NO;
+            
+            // Setup zoom for children
+            self.minimumZoomScale = 0.5;
+            self.maximumZoomScale = 5.0;
+            self.zoomScale = 1.0;
+            
             return;
         }
+        
+        // Show image view when URI is provided
+        _photoImageView.hidden = NO;
+        _tapView.hidden = NO;
+        self.hasSource = YES;
+        
         _source = source;
         NSURL *imageURL = [NSURL URLWithString:uri];
 
@@ -380,6 +408,7 @@
 
 - (void)setImage:(UIImage *)image {
     _image = image;
+    self.hasSource = YES;
     [self displayWithImage:_image];
 }
 

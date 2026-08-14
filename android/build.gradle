@@ -5,34 +5,36 @@ buildscript {
         google()
         mavenCentral()
     }
+
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.2.2'
+        classpath 'com.android.tools.build:gradle:8.6.1'
     }
 }
 
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 30
-    buildToolsVersion "30.0.2"
+    namespace 'com.reactnative.photoview'
+
+    compileSdk 35
 
     defaultConfig {
-        minSdkVersion 21
-        targetSdkVersion 30
+        minSdk 24
+        targetSdk 35
         versionCode 1
     }
-    lintOptions {
+
+    lint {
         abortOnError false
     }
 }
 
 repositories {
-    mavenCentral()
     google()
+    mavenCentral()
 }
 
 dependencies {
     implementation 'com.facebook.react:react-native:+'
     implementation 'com.facebook.fresco:fresco:2.6.0'
-    implementation 'me.relex:photodraweeview:2.1.0'
 }

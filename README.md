@@ -11,7 +11,10 @@ This component uses [PhotoDraweeView](https://github.com/ongakuer/PhotoDraweeVie
 import PhotoView from 'react-native-photo-view';
 ```
 
-Basics:
+### PhotoView - For Displaying Images
+
+Use `PhotoView` when you want to display images with zoom/pan support:
+
 ```javascript
 <PhotoView
   source={{uri: 'https://facebook.github.io/react/img/logo_og.png'}}
@@ -22,7 +25,75 @@ Basics:
   style={{width: 300, height: 300}} />
 ```
 
+### PhotoViewContainer - For Displaying Child Views with Zoom/Pan
+
+Use `PhotoViewContainer` when you want to display arbitrary child views (like video players) with zoom/pan/fling gesture support. This is a container specifically designed for children, with optimized gesture handling.
+
+```javascript
+import PhotoViewContainer from 'react-native-photo-view';
+import { Video } from 'react-native-video';
+
+<PhotoViewContainer
+  minimumZoomScale={0.5}
+  maximumZoomScale={4.0}
+  onScaleChange={(scale) => console.log('Scale:', scale)}
+  style={{width: 300, height: 300}}>
+  <Video
+    source={{uri: 'https://example.com/video.mp4'}}
+    style={{width: '100%', height: '100%'}}
+    controls
+  />
+</PhotoViewContainer>
+```
+
+PhotoViewContainer features:
+- **Double-tap zoom**: Tap twice to zoom in/out
+- **Pinch-to-zoom**: Standard pinch gesture for smooth zooming
+- **Pan/drag**: Click and drag to move around when zoomed
+- **Fling/momentum**: Swipe to continue scrolling with momentum
+- **No image rendering**: Pure container for child gestures (no image display)
+- **Configurable zoom ranges**: Set min/max scale levels
+
+### Mixed Content - Image with Overlay
+
+To display an image with overlay text or other views, use PhotoView with children:
+
+```javascript
+<PhotoView
+  source={{uri: 'https://facebook.github.io/react/img/logo_og.png'}}
+  minimumZoomScale={0.5}
+  maximumZoomScale={3}
+  style={{width: 300, height: 300}}>
+  <Text style={{fontSize: 16, marginBottom: 10, color: 'white'}}>
+    This text appears over the image
+  </Text>
+</PhotoView>
+```
+
+## Architecture
+
+### PhotoView
+- **Purpose**: Display images with pinch-to-zoom
+- **Base**: Extends PhotoDraweeView (Android) or uses MWPhotobrowser (iOS)
+- **Gestures**: Built-in image zoom/pan handling
+- **Children**: Optional overlay (overlays appear on top of image, not affected by zoom gestures)
+- **Android Implementation**: Image-only, no gesture handling for children
+
+### PhotoViewContainer  
+- **Purpose**: Display arbitrary child views with zoom/pan gestures
+- **Base**: FrameLayout (Android) or UIScrollView wrapper (iOS)
+- **Gestures**: Pinch, double-tap, pan, fling - all applied to children
+- **Children**: Required - the view you want to zoom/pan
+- **Android Implementation**: Uses Attacher pattern with ScaleDragDetector
+- **iOS Implementation**: Uses UIScrollView with zoom/pan protocol
+
+**Key Difference**: 
+- `PhotoView` = Image display with optional overlay
+- `PhotoViewContainer` = Child view container with gesture support
+
 ## Properties
+
+### PhotoView Properties
 
 | Property | Type | Description |
 |-----------------|----------|--------------------------------------------------------------|
@@ -34,7 +105,7 @@ Basics:
 | showsHorizontalScrollIndicator | bool | **iOS only**: When true, shows a horizontal scroll indicator. The default value is true. |
 | showsVerticalScrollIndicator | bool | **iOS only**: When true, shows a vertical scroll indicator. The default value is true. |
 | scale | float | Set zoom scale programmatically |
-androidZoomTransitionDuration | int | **Android only**: Double-tap zoom transition duration |
+| androidZoomTransitionDuration | int | **Android only**: Double-tap zoom transition duration |
 | androidScaleType | String | **Android only**: One of the default *Android* scale types: "center", "centerCrop", "centerInside", "fitCenter", "fitStart", "fitEnd", "fitXY" |
 | onLoadStart | func | Callback function |
 | onLoad | func | Callback function |
@@ -43,6 +114,17 @@ androidZoomTransitionDuration | int | **Android only**: Double-tap zoom transiti
 | onTap | func | Callback function (called on image tap) |
 | onViewTap | func | Callback function (called on tap outside of image) |
 | onScale | func | Callback function |
+
+### PhotoViewContainer Properties
+
+| Property | Type | Description |
+|-----------------|----------|--------------------------------------------------------------|
+| minimumZoomScale | float | The minimum allowed zoom scale. The default value is 0.5 |
+| maximumZoomScale | float | The maximum allowed zoom scale. The default value is 5.0 |
+| scale | float | Set zoom scale programmatically |
+| zoomTransitionDuration | int | Duration of zoom animations in milliseconds (default: 300) |
+| onScaleChange | func | Callback function, invoked when zoom scale changes |
+| onDoubleTap | func | Callback function, invoked when double-tapped |
 
 ## Compared to [react-native-image-zoom](https://github.com/Anthonyzou/react-native-image-zoom)
 
@@ -55,7 +137,8 @@ support Facebook Fresco;
 * PhotoView has more options like fadeDuration and minimumZoomScale/maximumZoomScale and more important callbacks;
 * PhotoView is written in the same manner as default React Image, and it supports most of the
 features Image has (the goal is to be fully compaitable with Image and support absolutely everything);
-* It is possible to use PhotoView as a container (currently iOS only)!
+* It is possible to use PhotoView as a container - children can be displayed on top of the image and will be affected by zoom and pan gestures!
+* PhotoViewContainer is a dedicated component for child views with zoom/pan support, providing optimal gesture handling
 
 ## Automatic installation
 
