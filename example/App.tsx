@@ -6,12 +6,12 @@ import {
 } from 'react-native';
 import PhotoView from 'react-native-photo-view';
 
-export default class Example extends Component {
+export default class App extends Component {
   render() {
     return (
       <View style={styles.container}>
         <PhotoView
-          source={{uri: 'https://facebook.github.io/react/img/logo_og.png'}}
+          source={{ uri: 'https://facebook.github.io/react/img/logo_og.png' }}
           onLoad={() => console.log("onLoad called")}
           onTap={() => console.log("onTap called")}
           minimumZoomScale={0.5}
@@ -42,5 +42,3 @@ const styles = StyleSheet.create({
     color: "#FFF",
   }
 });
-
-AppRegistry.registerComponent('example', () => Example);
