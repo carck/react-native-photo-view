@@ -63,7 +63,7 @@ public class Attacher implements IAttacher, View.OnTouchListener, OnScaleDragGes
 
     public Attacher(View view) {
         mView = new WeakReference<>(view);
-        mView.setOnTouchListener(this);
+        view.setOnTouchListener(this);
         mScaleDragDetector = new ScaleDragDetector(view.getContext(), this);
         mGestureDetector = new GestureDetectorCompat(view.getContext(),
                 new GestureDetector.SimpleOnGestureListener() {
@@ -554,7 +554,7 @@ public class Attacher implements IAttacher, View.OnTouchListener, OnScaleDragGes
         }
     }
 
-    protected void onDetachedFromWindow() {
+    public void onDetachedFromWindow() {
         cancelFling();
     }
 }

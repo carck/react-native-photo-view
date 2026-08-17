@@ -146,6 +146,10 @@ public class ScalingView extends FrameLayout implements IAttacher {
     @Override public OnViewTapListener getOnViewTapListener() {
         return mAttacher.getOnViewTapListener();
     }
+
+    @Override public void update(int w, int h){
+
+    }
  
     @Override protected void onSizeChanged(
             int w,
