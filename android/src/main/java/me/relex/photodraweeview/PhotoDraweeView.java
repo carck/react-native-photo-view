@@ -43,7 +43,8 @@ public class PhotoDraweeView extends SimpleDraweeView implements IAttacher {
     }
 
     protected void init() {
-        if (mAttacher == null || mAttacher.getDraweeView() == null) {
+        if (mAttacher == null || mAttacher.getView() == null) {
+            this.getHierarchy().setActualImageScaleType(ScalingUtils.ScaleType.FIT_CENTER);
             mAttacher = new Attacher(this);
         }
     }

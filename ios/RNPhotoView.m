@@ -17,6 +17,7 @@
 @property (nonatomic, strong) MWTapDetectingImageView *photoImageView;
 @property (nonatomic, strong) MWTapDetectingView *tapView;
 @property (nonatomic, strong) UIImageView *loadingImageView;
+@property (nonatomic, strong) UIView *contentView;
 
 #pragma mark - Data
 
@@ -46,14 +47,16 @@
     if (self.hasSource) {
         return _photoImageView;
     }
-    // Otherwise, zoom the first child view (e.g., video player)
-    // Skip photoImageView and tapView
-    for (UIView *view in self.subviews) {
-        if (view != _photoImageView && view != _tapView) {
-            return view;
-        }
-    }
-    return _photoImageView;
+    // React Native children are kept in one wrapper so they scale together.
+    return _contentView;
+}
+
+- (void)insertReactSubview:(UIView *)subview atIndex:(NSInteger)atIndex {
+    [_contentView insertSubview:subview atIndex:atIndex];
+}
+
+- (void)removeReactSubview:(UIView *)subview {
+    [subview removeFromSuperview];
 }
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
@@ -238,6 +241,10 @@
     // Super
     [super layoutSubviews];
 
+    if (!self.hasSource) {
+        return;
+    }
+
     // Center the image as it becomes smaller than the size of the screen
     CGSize boundsSize = self.bounds.size;
     CGRect frameToCenter = _photoImageView.frame;
@@ -315,6 +322,8 @@
             self.minimumZoomScale = 0.5;
             self.maximumZoomScale = 5.0;
             self.zoomScale = 1.0;
+            _contentView.frame = self.bounds;
+            self.contentSize = _contentView.bounds.size;
             
             return;
         }
@@ -456,6 +465,10 @@
     _photoImageView.contentMode = UIViewContentModeCenter;
     _photoImageView.tapDelegate = self;
     [self addSubview:_photoImageView];
+
+    _contentView = [[UIView alloc] initWithFrame:self.bounds];
+    _contentView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    [self addSubview:_contentView];
 }
 
 @end

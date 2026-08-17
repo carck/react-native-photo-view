@@ -44,6 +44,7 @@ import static com.facebook.react.views.image.ReactImageView.REMOTE_IMAGE_FADE_DU
  * @version 1.0
  */
 public class PhotoView extends PhotoDraweeView {
+    private static int sMaxTextureSize = 0;
     private Uri mUri;
     private ReadableMap mHeaders;
     private boolean mIsDirty;
@@ -230,6 +231,9 @@ public class PhotoView extends PhotoDraweeView {
     }
 
     private int getMaxTextureSize() {
+        if (sMaxTextureSize > 0) {
+            return sMaxTextureSize;
+        }
         // Safe minimum default size
         final int IMAGE_MAX_BITMAP_DIMENSION = 2048;
 
@@ -266,7 +270,8 @@ public class PhotoView extends PhotoDraweeView {
         egl.eglTerminate(display);
 
         // Return largest texture size found, or default
-        return Math.max(maximumTextureSize, IMAGE_MAX_BITMAP_DIMENSION);
+        sMaxTextureSize = Math.max(maximumTextureSize, IMAGE_MAX_BITMAP_DIMENSION);
+        return sMaxTextureSize;
     }
 }
 

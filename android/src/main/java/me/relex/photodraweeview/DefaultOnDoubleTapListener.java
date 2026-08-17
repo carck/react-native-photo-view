@@ -3,8 +3,7 @@ package me.relex.photodraweeview;
 import android.graphics.RectF;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
-import com.facebook.drawee.generic.GenericDraweeHierarchy;
-import com.facebook.drawee.view.DraweeView;
+import android.view.View;
 
 public class DefaultOnDoubleTapListener implements GestureDetector.OnDoubleTapListener {
 
@@ -19,8 +18,8 @@ public class DefaultOnDoubleTapListener implements GestureDetector.OnDoubleTapLi
         if (mAttacher == null) {
             return false;
         }
-        DraweeView<GenericDraweeHierarchy> draweeView = mAttacher.getDraweeView();
-        if (draweeView == null) {
+        View view = mAttacher.getView();
+        if (view == null) {
             return false;
         }
 
@@ -32,14 +31,14 @@ public class DefaultOnDoubleTapListener implements GestureDetector.OnDoubleTapLi
                 if (displayRect.contains(x, y)) {
                     float xResult = (x - displayRect.left) / displayRect.width();
                     float yResult = (y - displayRect.top) / displayRect.height();
-                    mAttacher.getOnPhotoTapListener().onPhotoTap(draweeView, xResult, yResult);
+                    mAttacher.getOnPhotoTapListener().onPhotoTap(view, xResult, yResult);
                     return true;
                 }
             }
         }
 
         if (mAttacher.getOnViewTapListener() != null) {
-            mAttacher.getOnViewTapListener().onViewTap(draweeView, e.getX(), e.getY());
+            mAttacher.getOnViewTapListener().onViewTap(view, e.getX(), e.getY());
             return true;
         }
 

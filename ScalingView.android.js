@@ -2,7 +2,7 @@ import React from 'react';
 import { requireNativeComponent } from 'react-native';
 
 /**
- * PhotoViewContainer - A container view with pinch-to-zoom, pan, and fling support
+ * ScalingView - A container view with pinch-to-zoom, pan, and fling support
  * 
  * Use this component when you want to display arbitrary child views with zoom/pan gestures.
  * For displaying images with zoom support, use PhotoView instead.
@@ -17,7 +17,7 @@ import { requireNativeComponent } from 'react-native';
  * 
  * Example:
  * ```jsx
- * <PhotoViewContainer
+ * <ScalingView
  *   minimumZoomScale={0.5}
  *   maximumZoomScale={4.0}
  *   onScaleChange={(scale) => console.log('Scale:', scale)}
@@ -26,15 +26,15 @@ import { requireNativeComponent } from 'react-native';
  *     source={{ uri: 'https://example.com/video.mp4' }}
  *     style={{ width: '100%', height: '100%' }}
  *   />
- * </PhotoViewContainer>
+ * </ScalingView>
  * ```
  */
-const PhotoViewContainer = React.forwardRef((props, ref) => {
-  return <PhotoViewContainerIOS ref={ref} {...props} />;
+const ScalingView = React.forwardRef((props, ref) => {
+  return <NativeScalingView ref={ref} {...props} />;
 });
 
-PhotoViewContainer.displayName = 'PhotoViewContainer';
+ScalingView.displayName = 'ScalingView';
 
-const PhotoViewContainerIOS = requireNativeComponent('PhotoViewContainer');
+const NativeScalingView = requireNativeComponent('ScalingView');
 
-export default PhotoViewContainer;
+export default ScalingView;

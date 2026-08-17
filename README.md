@@ -25,15 +25,15 @@ Use `PhotoView` when you want to display images with zoom/pan support:
   style={{width: 300, height: 300}} />
 ```
 
-### PhotoViewContainer - For Displaying Child Views with Zoom/Pan
+### ScalingView - For Displaying Child Views with Zoom/Pan
 
-Use `PhotoViewContainer` when you want to display arbitrary child views (like video players) with zoom/pan/fling gesture support. This is a container specifically designed for children, with optimized gesture handling.
+Use `ScalingView` when you want to display arbitrary child views (like video players) with zoom/pan/fling gesture support. This is a container specifically designed for children, with optimized gesture handling.
 
 ```javascript
-import PhotoViewContainer from 'react-native-photo-view';
+import { ScalingView } from 'react-native-photo-view';
 import { Video } from 'react-native-video';
 
-<PhotoViewContainer
+<ScalingView
   minimumZoomScale={0.5}
   maximumZoomScale={4.0}
   onScaleChange={(scale) => console.log('Scale:', scale)}
@@ -43,10 +43,10 @@ import { Video } from 'react-native-video';
     style={{width: '100%', height: '100%'}}
     controls
   />
-</PhotoViewContainer>
+</ScalingView>
 ```
 
-PhotoViewContainer features:
+ScalingView features:
 - **Double-tap zoom**: Tap twice to zoom in/out
 - **Pinch-to-zoom**: Standard pinch gesture for smooth zooming
 - **Pan/drag**: Click and drag to move around when zoomed
@@ -79,7 +79,7 @@ To display an image with overlay text or other views, use PhotoView with childre
 - **Children**: Optional overlay (overlays appear on top of image, not affected by zoom gestures)
 - **Android Implementation**: Image-only, no gesture handling for children
 
-### PhotoViewContainer  
+### ScalingView
 - **Purpose**: Display arbitrary child views with zoom/pan gestures
 - **Base**: FrameLayout (Android) or UIScrollView wrapper (iOS)
 - **Gestures**: Pinch, double-tap, pan, fling - all applied to children
@@ -89,7 +89,7 @@ To display an image with overlay text or other views, use PhotoView with childre
 
 **Key Difference**: 
 - `PhotoView` = Image display with optional overlay
-- `PhotoViewContainer` = Child view container with gesture support
+- `ScalingView` = Child view container with gesture support
 
 ## Properties
 
@@ -115,7 +115,7 @@ To display an image with overlay text or other views, use PhotoView with childre
 | onViewTap | func | Callback function (called on tap outside of image) |
 | onScale | func | Callback function |
 
-### PhotoViewContainer Properties
+### ScalingView Properties
 
 | Property | Type | Description |
 |-----------------|----------|--------------------------------------------------------------|
@@ -138,7 +138,7 @@ support Facebook Fresco;
 * PhotoView is written in the same manner as default React Image, and it supports most of the
 features Image has (the goal is to be fully compaitable with Image and support absolutely everything);
 * It is possible to use PhotoView as a container - children can be displayed on top of the image and will be affected by zoom and pan gestures!
-* PhotoViewContainer is a dedicated component for child views with zoom/pan support, providing optimal gesture handling
+* ScalingView is a dedicated component for child views with zoom/pan support, providing optimal gesture handling
 
 ## Automatic installation
 

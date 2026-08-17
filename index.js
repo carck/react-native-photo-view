@@ -1,5 +1,5 @@
 import PhotoView from './PhotoView'
-import PhotoViewContainer from './PhotoViewContainer'
+import ScalingView from './ScalingView'
 
 export default PhotoView
-export { PhotoView, PhotoViewContainer }
+export { PhotoView, ScalingView }
