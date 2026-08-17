@@ -5716,7 +5716,7 @@ react-is@^17.0.1:
 
 "react-native-photo-view@github:carck/react-native-photo-view.git#container":
   version "1.5.3"
-  resolved "https://codeload.github.com/carck/react-native-photo-view/tar.gz/fd5c1ff020a8fd961580f395981d086027267a1f"
+  resolved "https://codeload.github.com/carck/react-native-photo-view/tar.gz/fa181b75a53151ce06a7543e8f2bedfa1ba75d88"
   dependencies:
     prop-types "^15.5.10"
 
