@@ -60,6 +60,7 @@ public class Attacher implements IAttacher, View.OnTouchListener, OnScaleDragGes
     private OnViewTapListener mViewTapListener;
     private View.OnLongClickListener mLongClickListener;
     private OnScaleChangeListener mScaleChangeListener;
+    private OnMatrixChangeListener mMatrixChangeListener;
 
     public Attacher(View view) {
         mView = new WeakReference<>(view);
@@ -178,6 +179,10 @@ public class Attacher implements IAttacher, View.OnTouchListener, OnScaleDragGes
         mViewTapListener = listener;
     }
 
+    public void setOnMatrixChangeListener(OnMatrixChangeListener listener) {
+        mMatrixChangeListener = listener;
+    }
+
     @Override public OnPhotoTapListener getOnPhotoTapListener() {
         return mPhotoTapListener;
     }
@@ -246,8 +251,14 @@ public class Attacher implements IAttacher, View.OnTouchListener, OnScaleDragGes
             return;
         }
 
-        if (checkMatrixBounds()) {
-            view.invalidate();
+        checkMatrixBounds();
+        notifyMatrixChanged();
+        view.invalidate();
+    }
+
+    private void notifyMatrixChanged() {
+        if (mMatrixChangeListener != null) {
+            mMatrixChangeListener.onMatrixChanged(mMatrix);
         }
     }
 
@@ -318,6 +329,8 @@ public class Attacher implements IAttacher, View.OnTouchListener, OnScaleDragGes
     private void resetMatrix() {
         mMatrix.reset();
         checkMatrixBounds();
+        notifyMatrixChanged();
+
         View view = getView();
         if (view != null) {
             view.invalidate();
@@ -531,6 +544,7 @@ public class Attacher implements IAttacher, View.OnTouchListener, OnScaleDragGes
                 final int newX = mScroller.getCurrX();
                 final int newY = mScroller.getCurrY();
                 mMatrix.postTranslate(mCurrentX - newX, mCurrentY - newY);
+                notifyMatrixChanged();
                 view.invalidate();
                 mCurrentX = newX;
                 mCurrentY = newY;

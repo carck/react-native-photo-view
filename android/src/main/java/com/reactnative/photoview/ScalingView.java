@@ -1,13 +1,15 @@
 package com.reactnative.photoview;
 
 import android.content.Context;
-import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.view.TextureView;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-import androidx.annotation.NonNull;
+import android.widget.ImageView;
 
 import me.relex.photodraweeview.Attacher;
 import me.relex.photodraweeview.IAttacher;
@@ -18,6 +20,8 @@ import me.relex.photodraweeview.OnViewTapListener;
 public class ScalingView extends FrameLayout implements IAttacher {
 
     private Attacher mAttacher;
+    private TextureView mTextureView;
+    private ImageView mImageView;
 
     public ScalingView(Context context) {
         super(context);
@@ -29,6 +33,9 @@ public class ScalingView extends FrameLayout implements IAttacher {
     protected void init() {
         if (mAttacher == null || mAttacher.getView() == null) {
             mAttacher = new Attacher(this);
+            mAttacher.setOnMatrixChangeListener(matrix -> {
+                applyVideoMatrix();
+            });
             setOnTouchListener(null);
         }
     }
@@ -50,11 +57,86 @@ public class ScalingView extends FrameLayout implements IAttacher {
         return true;
     }
 
-    @Override protected void dispatchDraw(@NonNull Canvas canvas) {
-        int saveCount = canvas.save();
-        canvas.concat(mAttacher.getDrawMatrix());
-        super.dispatchDraw(canvas);
-        canvas.restoreToCount(saveCount);
+    @Override
+    public void onViewAdded(View child) {
+        super.onViewAdded(child);
+        applyVideoMatrix();
+    }
+
+    @Override
+    public void onViewRemoved(View child) {
+        super.onViewRemoved(child);
+        applyVideoMatrix();
+    }
+
+    @Override
+    protected void onLayout(
+            boolean changed,
+            int left,
+            int top,
+            int right,
+            int bottom) {
+
+        super.onLayout(changed, left, top, right, bottom);
+
+        applyVideoMatrix();
+    }
+
+    private TextureView findTextureView(View view) {
+        if (view instanceof TextureView) {
+            return (TextureView) view;
+        }
+
+        if (view instanceof ViewGroup) {
+            ViewGroup group = (ViewGroup) view;
+
+            for (int i = 0; i < group.getChildCount(); i++) {
+                TextureView result = findTextureView(group.getChildAt(i));
+                if (result != null) {
+                    return result;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private ImageView findImageView(View view) {
+        if (view instanceof ImageView) {
+            return (ImageView) view;
+        }
+
+        if (view instanceof ViewGroup) {
+            ViewGroup group = (ViewGroup) view;
+
+            for (int i = 0; i < group.getChildCount(); i++) {
+                ImageView result = findImageView(group.getChildAt(i));
+                if (result != null) {
+                    return result;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private void applyVideoMatrix() {
+        if (mTextureView == null || !mTextureView.isAttachedToWindow()) {
+            mTextureView = findTextureView(this);
+        }
+
+        if (mImageView == null || !mImageView.isAttachedToWindow()) {
+            mImageView = findImageView(this);
+        }
+
+        if (mTextureView != null) {
+            mTextureView.setTransform(mAttacher.getDrawMatrix());
+        }
+
+        if (mImageView != null) {
+            mImageView.setScaleType(ImageView.ScaleType.MATRIX);
+            mImageView.setImageMatrix(mAttacher.getDrawMatrix());
+        }
     }
 
     @Override protected void onAttachedToWindow() {
