@@ -6,7 +6,7 @@ import {
   Dimensions,
   Image,
 } from 'react-native';
-import PhotoView from 'react-native-photo-view';
+import PhotoView,{ScalingView} from 'react-native-photo-view';
 
 const { width, height } = Dimensions.get('window');
 
@@ -26,16 +26,16 @@ export default class App extends Component {
   renderItem = ({ item, index }) => {
     return (
       <View style={styles.item}>
-        <PhotoView
+        <ScalingView
           source={{}}
           onLoad={() => console.log(`Image ${index + 1} loaded`)}
           onTap={() => console.log(`Image ${index + 1} tapped`)}
-          minimumZoomScale={0.5}
+          minimumZoomScale={1}
           maximumZoomScale={3}
           androidScaleType="center"
         >
           <Image style={styles.photo} source={{ uri: item }}></Image>
-        </PhotoView>
+        </ScalingView>
       </View>
     );
   };

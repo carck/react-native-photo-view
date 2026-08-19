@@ -16,8 +16,10 @@ import me.relex.photodraweeview.IAttacher;
 import me.relex.photodraweeview.OnPhotoTapListener;
 import me.relex.photodraweeview.OnScaleChangeListener;
 import me.relex.photodraweeview.OnViewTapListener;
+import android.util.Log;
 
 public class ScalingView extends FrameLayout implements IAttacher {
+    private static final String TAG = "ScalingView";
 
     private Attacher mAttacher;
     private TextureView mTextureView;
@@ -36,7 +38,7 @@ public class ScalingView extends FrameLayout implements IAttacher {
             mAttacher.setOnMatrixChangeListener(matrix -> {
                 applyVideoMatrix();
             });
-            setOnTouchListener(null);
+            this.setOnTouchListener(null);
         }
     }
 
@@ -46,15 +48,17 @@ public class ScalingView extends FrameLayout implements IAttacher {
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
-        mAttacher.onTouch(this, event);
-        MotionEvent childEvent = MotionEvent.obtain(event);
-        Matrix inverseMatrix = new Matrix();
-        if (mAttacher.getDrawMatrix().invert(inverseMatrix)) {
-            childEvent.transform(inverseMatrix);
+        boolean result;
+
+        if (mAttacher != null) {
+            result = mAttacher.onTouch(this, event);
+        } else {
+            result = super.dispatchTouchEvent(event);
         }
-        super.dispatchTouchEvent(childEvent);
-        childEvent.recycle();
-        return true;
+
+        Log.d(TAG, "dispatchTouchEvent result=" + result);
+
+        return result;
     }
 
     @Override
@@ -121,6 +125,7 @@ public class ScalingView extends FrameLayout implements IAttacher {
     }
 
     private void applyVideoMatrix() {
+        Log.d(TAG, "apply matrix result=" + mAttacher.getDrawMatrix());
         if (mTextureView == null || !mTextureView.isAttachedToWindow()) {
             mTextureView = findTextureView(this);
         }
@@ -135,7 +140,7 @@ public class ScalingView extends FrameLayout implements IAttacher {
 
         if (mImageView != null) {
             mImageView.setScaleType(ImageView.ScaleType.MATRIX);
-            mImageView.setImageMatrix(mAttacher.getDrawMatrix());
+            mImageView.setAnimationMatrix(mAttacher.getDrawMatrix());
         }
     }
 
