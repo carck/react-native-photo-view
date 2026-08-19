@@ -56,7 +56,7 @@ public class ScalingView extends FrameLayout implements IAttacher {
             result = super.dispatchTouchEvent(event);
         }
 
-        Log.d(TAG, "dispatchTouchEvent result=" + result);
+        //Log.d(TAG, "dispatchTouchEvent result=" + result);
 
         return result;
     }
@@ -125,7 +125,7 @@ public class ScalingView extends FrameLayout implements IAttacher {
     }
 
     private void applyVideoMatrix() {
-        Log.d(TAG, "apply matrix result=" + mAttacher.getDrawMatrix());
+        //Log.d(TAG, "apply matrix result=" + mAttacher.getDrawMatrix());
         if (mTextureView == null || !mTextureView.isAttachedToWindow()) {
             mTextureView = findTextureView(this);
         }
@@ -139,7 +139,6 @@ public class ScalingView extends FrameLayout implements IAttacher {
         }
 
         if (mImageView != null) {
-            mImageView.setScaleType(ImageView.ScaleType.MATRIX);
             mImageView.setAnimationMatrix(mAttacher.getDrawMatrix());
         }
     }
