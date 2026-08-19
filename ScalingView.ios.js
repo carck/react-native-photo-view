@@ -1,5 +1,4 @@
 import React from 'react';
-import { requireNativeComponent } from 'react-native';
 
 /**
  * ScalingView - A container view with pinch-to-zoom, pan, and fling support
@@ -29,12 +28,13 @@ import { requireNativeComponent } from 'react-native';
  * </ScalingView>
  * ```
  */
+
+import PhotoView from './PhotoView';
+
 const ScalingView = React.forwardRef(({ onScaleChange, ...props }, ref) => {
-  return <RNPhotoView ref={ref} src={{}} onPhotoViewerScale={onScaleChange} {...props} />;
+  return <PhotoView source={ref} source={{uri:''}} onPhotoViewerScale={onScaleChange} {...props} />;
 });
 
 ScalingView.displayName = 'ScalingView';
-
-const RNPhotoView = requireNativeComponent('RNPhotoView');
 
 export default ScalingView;

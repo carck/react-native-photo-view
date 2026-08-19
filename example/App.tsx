@@ -1,23 +1,59 @@
 import React, { Component } from 'react';
 import {
-  AppRegistry,
+  FlatList,
   StyleSheet,
-  View
+  View,
+  Dimensions,
+  Image,
 } from 'react-native';
 import PhotoView from 'react-native-photo-view';
 
+const { width, height } = Dimensions.get('window');
+
 export default class App extends Component {
-  render() {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      images: [
+        'https://reactnative.dev/img/homepage/dissection.png',
+        'https://reactnative.dev/img/homepage/dissection.png',
+        'https://reactnative.dev/img/homepage/dissection.png',
+      ],
+    };
+  }
+
+  renderItem = ({ item, index }) => {
     return (
-      <View style={styles.container}>
+      <View style={styles.item}>
         <PhotoView
-          source={{ uri: 'https://facebook.github.io/react/img/logo_og.png' }}
-          onLoad={() => console.log("onLoad called")}
-          onTap={() => console.log("onTap called")}
+          source={{}}
+          onLoad={() => console.log(`Image ${index + 1} loaded`)}
+          onTap={() => console.log(`Image ${index + 1} tapped`)}
           minimumZoomScale={0.5}
           maximumZoomScale={3}
           androidScaleType="center"
-          style={styles.photo} />
+        >
+          <Image style={styles.photo} source={{ uri: item }}></Image>
+        </PhotoView>
+      </View>
+    );
+  };
+
+  render() {
+    const { images } = this.state;
+
+    return (
+      <View style={styles.container}>
+        <FlatList
+          data={images}
+          renderItem={this.renderItem}
+          keyExtractor={(item, index) => `${index}-${item}`}
+          horizontal
+          pagingEnabled
+          showsHorizontalScrollIndicator={false}
+          decelerationRate="fast"
+        />
       </View>
     );
   }
@@ -26,19 +62,19 @@ export default class App extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#000',
+  },
+
+  item: {
+    width: width,
+    height: height,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F5FCFF',
   },
+
   photo: {
-    width: 300,
-    height: 300,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'black'
+    width: width,
+    height: height,
+    backgroundColor: '#000',
   },
-  text: {
-    backgroundColor: "transparent",
-    color: "#FFF",
-  }
 });

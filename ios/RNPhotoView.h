@@ -16,6 +16,7 @@
 @property (nonatomic, assign) CGFloat minZoomScale;
 @property (nonatomic, assign) CGFloat maxZoomScale;
 @property (nonatomic, assign) BOOL hasSource;
+@property (nonatomic, assign) CGSize lastLayoutSize;
 
 #pragma mark - Block
 

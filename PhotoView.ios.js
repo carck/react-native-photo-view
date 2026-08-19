@@ -41,15 +41,11 @@ export default class PhotoView extends Component {
         const source = resolveAssetSource(this.props.source);
         var loadingIndicatorSource = resolveAssetSource(this.props.loadingIndicatorSource);
 
-        if (source && source.uri === '') {
-            console.warn('source.uri should not be an empty string');
-        }
-
         if (this.props.src) {
             console.warn('The <PhotoView> component requires a `source` property rather than `src`.');
         }
 
-        if (source && source.uri) {
+        if (source) {
             var {onLoadStart, onLoad, onLoadEnd, onProgress, onTap, onViewTap, onScale, onError, ...props} = this.props;
 
             var nativeProps = {

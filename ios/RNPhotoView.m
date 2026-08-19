@@ -17,7 +17,7 @@
 @property (nonatomic, strong) MWTapDetectingImageView *photoImageView;
 @property (nonatomic, strong) MWTapDetectingView *tapView;
 @property (nonatomic, strong) UIImageView *loadingImageView;
-@property (nonatomic, strong) UIView *contentView;
+@property (nonatomic, strong) MWTapDetectingView *contentView;
 
 #pragma mark - Data
 
@@ -72,8 +72,10 @@
 }
 
 - (void)scrollViewDidZoom:(UIScrollView *)scrollView {
-    [self setNeedsLayout];
-    [self layoutIfNeeded];
+    if (self.hasSource) {
+        [self setNeedsLayout];
+        [self layoutIfNeeded];
+    }
 }
 
 #pragma mark - Tap Detection
@@ -234,9 +236,18 @@
 #pragma mark - Layout
 
 - (void)layoutSubviews {
+    if (self.hasSource) {
+        // Update tap view frame
+        _tapView.frame = self.bounds;
+    } else {
+        CGSize currentSize = self.bounds.size;
+        BOOL sizeChanged = !CGSizeEqualToSize(currentSize, _lastLayoutSize);
 
-    // Update tap view frame
-    _tapView.frame = self.bounds;
+        if (sizeChanged) {
+            _lastLayoutSize = currentSize;
+            _contentView.frame = self.bounds;
+        }
+    }
 
     // Super
     [super layoutSubviews];
@@ -316,13 +327,16 @@
         if (!uri) {
             _photoImageView.hidden = YES;
             _tapView.hidden = YES;
+            _source = nil;
             self.hasSource = NO;
             
             // Setup zoom for children
-            self.minimumZoomScale = 0.5;
-            self.maximumZoomScale = 5.0;
             self.zoomScale = 1.0;
+            self.maximumZoomScale = _maxZoomScale;
+            self.minimumZoomScale = _minZoomScale;
+            _contentView.hidden = NO;
             _contentView.frame = self.bounds;
+            _lastLayoutSize = self.bounds.size;
             self.contentSize = _contentView.bounds.size;
             
             return;
@@ -331,6 +345,7 @@
         // Show image view when URI is provided
         _photoImageView.hidden = NO;
         _tapView.hidden = NO;
+        _contentView.hidden = YES;
         self.hasSource = YES;
         
         _source = source;
@@ -449,8 +464,8 @@
     self.backgroundColor = [UIColor clearColor];
     self.delegate = self;
     self.decelerationRate = UIScrollViewDecelerationRateFast;
-    self.showsVerticalScrollIndicator = YES;
-    self.showsHorizontalScrollIndicator = YES;
+    self.showsVerticalScrollIndicator = NO;
+    self.showsHorizontalScrollIndicator = NO;
 
     // Tap view for background
     _tapView = [[MWTapDetectingView alloc] initWithFrame:self.bounds];
@@ -466,8 +481,10 @@
     _photoImageView.tapDelegate = self;
     [self addSubview:_photoImageView];
 
-    _contentView = [[UIView alloc] initWithFrame:self.bounds];
-    _contentView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    _contentView = [[MWTapDetectingView alloc] initWithFrame:self.bounds];
+    _contentView.backgroundColor = [UIColor clearColor];
+    _contentView.tapDelegate = self;
+    _contentView.hidden = YES;
     [self addSubview:_contentView];
 }
 
