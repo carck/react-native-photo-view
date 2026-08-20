@@ -310,8 +310,8 @@ public class Attacher implements IAttacher, View.OnTouchListener, OnScaleDragGes
             return null;
         }
         mDisplayRect.set(0.0F, 0.0F, mImageInfoWidth, mImageInfoHeight);
-        if (view instanceof PhotoDraweeView) {
-            ((PhotoDraweeView) view).getHierarchy().getActualImageBounds(mDisplayRect);
+        if (view instanceof IContentProvider) {
+            mDisplayRect.set(((IContentProvider) view).getDisplayRect());
         } else {
             mDisplayRect.set(0f, 0f, view.getWidth(), view.getHeight());
         }

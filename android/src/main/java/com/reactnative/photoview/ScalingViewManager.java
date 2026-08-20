@@ -1,6 +1,7 @@
 package com.reactnative.photoview;
 
 import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.ViewGroupManager;
 import com.facebook.react.uimanager.annotations.ReactProp;
@@ -39,5 +40,10 @@ public class ScalingViewManager extends ViewGroupManager<ScalingView> {
     @ReactProp(name = "androidZoomTransitionDuration")
     public void setScale(ScalingView view, int durationMs) {
         view.setZoomTransitionDuration(durationMs);
+    }
+
+    @ReactProp(name = "aspect")
+    public void setAspectRatio(ScalingView view, float aspectRatio) {
+        view.setAspectRatio(aspectRatio);
     }
 }

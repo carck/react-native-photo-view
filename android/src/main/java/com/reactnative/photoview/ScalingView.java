@@ -2,6 +2,7 @@ package com.reactnative.photoview;
 
 import android.content.Context;
 import android.graphics.Matrix;
+import android.graphics.RectF;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.TextureView;
@@ -13,17 +14,19 @@ import android.widget.ImageView;
 
 import me.relex.photodraweeview.Attacher;
 import me.relex.photodraweeview.IAttacher;
+import me.relex.photodraweeview.IContentProvider;
 import me.relex.photodraweeview.OnPhotoTapListener;
 import me.relex.photodraweeview.OnScaleChangeListener;
 import me.relex.photodraweeview.OnViewTapListener;
 import android.util.Log;
 
-public class ScalingView extends FrameLayout implements IAttacher {
+public class ScalingView extends FrameLayout implements IAttacher, IContentProvider {
     private static final String TAG = "ScalingView";
 
     private Attacher mAttacher;
     private TextureView mTextureView;
     private ImageView mImageView;
+    private float mAspectRatio = 1;
 
     public ScalingView(Context context) {
         super(context);
@@ -83,6 +86,7 @@ public class ScalingView extends FrameLayout implements IAttacher {
 
         super.onLayout(changed, left, top, right, bottom);
 
+        Log.d(TAG, "size=" + getWidth() + "x" + getHeight());
         applyVideoMatrix();
     }
 
@@ -124,6 +128,29 @@ public class ScalingView extends FrameLayout implements IAttacher {
         return null;
     }
 
+    private Matrix fitMatrix(){
+        float containerWidth = getWidth();
+        float containerHeight = getHeight();
+
+        RectF displayRect = getDisplayRect();
+
+        Matrix matrix = new Matrix();
+
+        if (containerWidth <= 0 ||
+            containerHeight <= 0 ||
+            displayRect.isEmpty()) {
+            return matrix;
+        }
+
+        float scaleX = displayRect.width() / containerWidth;
+        float scaleY = displayRect.height() / containerHeight;
+
+        matrix.setScale(scaleX, scaleY);
+        matrix.postTranslate(displayRect.left, displayRect.top);
+
+        return matrix;
+    }
+
     private void applyVideoMatrix() {
         //Log.d(TAG, "apply matrix result=" + mAttacher.getDrawMatrix());
         if (mTextureView == null || !mTextureView.isAttachedToWindow()) {
@@ -135,12 +162,58 @@ public class ScalingView extends FrameLayout implements IAttacher {
         }
 
         if (mTextureView != null) {
-            mTextureView.setTransform(mAttacher.getDrawMatrix());
+            Matrix finalMatrix = fitMatrix();
+            finalMatrix.postConcat(mAttacher.getDrawMatrix());
+            mTextureView.setTransform(finalMatrix);
         }
 
         if (mImageView != null) {
             mImageView.setAnimationMatrix(mAttacher.getDrawMatrix());
         }
+    }
+
+    public void setAspectRatio(float aspectRatio) {
+        mAspectRatio = aspectRatio;
+
+        RectF rect = getDisplayRect();
+        mAttacher.update((int)rect.width(), (int)rect.height());
+    }
+
+    public RectF getDisplayRect() {
+        float containerWidth = getWidth();
+        float containerHeight = getHeight();
+
+        if (containerWidth <= 0 || containerHeight <= 0 || mAspectRatio <= 0) {
+            return new RectF();
+        }
+
+        float containerRatio = containerWidth / containerHeight;
+
+        float contentWidth;
+        float contentHeight;
+
+        if (containerRatio > mAspectRatio) {
+            // Container wider than content
+            contentHeight = containerHeight;
+            contentWidth = contentHeight * mAspectRatio;
+        } else {
+            // Container taller/narrower than content
+            contentWidth = containerWidth;
+            contentHeight = contentWidth / mAspectRatio;
+        }
+
+        float left = (containerWidth - contentWidth) / 2f;
+        float top = (containerHeight - contentHeight) / 2f;
+
+        RectF rect= new RectF(
+            left,
+            top,
+            left + contentWidth,
+            top + contentHeight
+        );
+        Log.d(TAG, "Video rect=" + rect);
+
+        return rect;
     }
 
     @Override protected void onAttachedToWindow() {
@@ -245,6 +318,7 @@ public class ScalingView extends FrameLayout implements IAttacher {
 
         super.onSizeChanged(w, h, oldw, oldh);
 
-        mAttacher.update(w, h);
+        RectF rect = getDisplayRect();
+        mAttacher.update((int)rect.width(), (int)rect.height());
     }
 }

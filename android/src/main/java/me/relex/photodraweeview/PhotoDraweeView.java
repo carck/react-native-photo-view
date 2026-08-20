@@ -2,6 +2,7 @@ package me.relex.photodraweeview;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.RectF;
 import android.graphics.drawable.Animatable;
 import android.net.Uri;
 import androidx.annotation.NonNull;
@@ -17,7 +18,7 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.imagepipeline.image.ImageInfo;
 
-public class PhotoDraweeView extends SimpleDraweeView implements IAttacher {
+public class PhotoDraweeView extends SimpleDraweeView implements IAttacher, IContentProvider {
 
     private Attacher mAttacher;
 
@@ -210,5 +211,11 @@ public class PhotoDraweeView extends SimpleDraweeView implements IAttacher {
                 })
                 .build();
         setController(controller);
+    }
+
+    public RectF getDisplayRect(){
+        RectF rect = new RectF();
+        this.getHierarchy().getActualImageBounds(rect);
+        return rect;
     }
 }
