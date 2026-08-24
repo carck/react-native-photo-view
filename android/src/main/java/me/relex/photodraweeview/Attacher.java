@@ -192,6 +192,9 @@ public class Attacher implements IAttacher, View.OnTouchListener, OnScaleDragGes
     }
 
     @Override public void update(int imageInfoWidth, int imageInfoHeight) {
+        if(mImageInfoWidth == imageInfoWidth && mImageInfoHeight == imageInfoHeight){
+            return;
+        }
         mImageInfoWidth = imageInfoWidth;
         mImageInfoHeight = imageInfoHeight;
         updateBaseMatrix();
